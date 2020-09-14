@@ -12,6 +12,7 @@ class TPSquadSpider(scrapy.Spider):
     def parse_squad(self, response):
         yield {
             'image': response.css('.img-fluid::attr(src)').get(),
+            'number': response.css('h2 span::text').get(),
             'name': response.css('h2::text').get(),
             'clubs': response.css('.clubs p').get(),
             'palmares': response.css('.palmares::text').get()
