@@ -1,5 +1,6 @@
 import scrapy
-
+from scrapy.loader import ItemLoader
+from scrapy_demo.items import PlayerItem
 
 class TPSquadSpider(scrapy.Spider):
     name = "tpm-squad"
@@ -18,15 +19,17 @@ class TPSquadSpider(scrapy.Spider):
 
         statistics = self.get_stats(response, statistics)        
         details = self.get_details(response)
-        yield {
-            'image': response.css('.img-fluid::attr(src)').get(),
-            'details': details,
-            'number': response.css('h2 span::text').get(),
-            'name': response.css('h2::text').get(),
-            'clubs': response.css('.clubs p').get(),
-            'palmares': response.css('.palmares::text').get(),
-            'statistics': statistics
-        }
+        
+        player = PlayerItem()
+        player['image'] = response.css('.img-fluid::attr(src)').get()
+        player['details'] = details
+        player['number'] = response.css('h2 span::text').get()
+        player['name'] = response.css('h2::text').get()
+        player['clubs'] = response.css('.clubs p').get()
+        player['palmares'] = response.css('.palmares::text').get()
+        player['statistics'] = statistics
+        
+        yield dict(player)
 
     def get_stats(self, response, statistics):
         for attribute in response.css('.statsjoueur tbody tr'):
